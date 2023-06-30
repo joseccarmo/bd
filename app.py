@@ -1,5 +1,7 @@
 import psycopg2
 
+
+
 #limpar terminal
 def clear():
     print("\033c", end="")
@@ -14,18 +16,39 @@ def entrada(texto, entradas):
 
 def connect():
     clear()
-
-    """ Connect to the PostgreSQL database server """
+    banco_nome = "projeto"
+    usuario = "postgres"
+    senha = "123"
     conn = None
+    while(True):
+        print("conectar-se ao banco postgree")
+        print("(1) usuário padrão")
+        print("(2) Outro usuário")
+        print("(0) Sair")
+        ent = entrada(":", ['0','1','2'])
+        if  ent == '2':
+            banco_nome = input("Nome do Banco:")
+            usuario = input("nome de usuario:")
+            senha = input("senha:")
+        elif ent == '0':
+            return
+        try:
+            print('Connecting to the PostgreSQL database...')
+            conn = psycopg2.connect(dbname=banco_nome, user=usuario, password=senha)
+            break
+        except (Exception, psycopg2.DatabaseError) as error:
+            print(error)
+    
+    
     try:
         # connect to the PostgreSQL server
-        print('Connecting to the PostgreSQL database...')
-        conn = psycopg2.connect(dbname="projeto", user="postgres", password="123")
+        
 		
         # create a cursor
         cur = conn.cursor()
         
 	# execute a statement
+        clear()
         print('PostgreSQL database version:')
         cur.execute('SELECT version()')
 
@@ -92,7 +115,7 @@ def busca(cur):
 
 def insercao(conn, cur):
     print("(1) Inserir proposta de evento")
-    escolha = entrada(':',[1])
+    escolha = entrada(':',['1'])
 
     if escolha == '1':
         inserir_proposta(conn, cur)
