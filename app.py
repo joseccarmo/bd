@@ -20,33 +20,41 @@ def connect():
     usuario = "postgres"
     senha = "123"
     conn = None
+
+    #loop para receber credenciais validas
     while(True):
         print("conectar-se ao banco postgree")
         print("(1) usuário padrão")
         print("(2) Outro usuário")
         print("(0) Sair")
+
         ent = entrada(":", ['0','1','2'])
+
         if  ent == '2':
             banco_nome = input("Nome do Banco:")
             usuario = input("nome de usuario:")
             senha = input("senha:")
+
         elif ent == '0':
             return
+        
+        #tentar connectar com o servidor utilizando as credenciais recebidas
         try:
             print('Connecting to the PostgreSQL database...')
+
+            
             conn = psycopg2.connect(dbname=banco_nome, user=usuario, password=senha)
+
             break
+        #em caso de erro printa o erro acontecido
         except (Exception, psycopg2.DatabaseError) as error:
             print(error)
     
-    
+
+#try que cria o ponteiro e inicia a main do aplicativo
     try:
-        # connect to the PostgreSQL server
-        
-		
         # create a cursor
         cur = conn.cursor()
-        
 	# execute a statement
         clear()
         print('PostgreSQL database version:')
@@ -68,17 +76,21 @@ def connect():
             print('Database connection closed.')
 
 
+#função que printa a legenda
 def legenda():
     print()
     print("(1) Buscar dados no sistema")
     print("(2) Inserir novo dado no sistema")
     print("(0) Sair")
 
+
+#função de busca
 def busca(cur):
     try:
         clear()
         print("(1) Tabela pessoas")
         print("(0) Voltar")
+        
         escolha = entrada(':',['1','0'])
 
         if escolha == '0':
@@ -88,6 +100,9 @@ def busca(cur):
             if entrada("printar todos os valores ?(S/N)",['S','N']) == 'S':
                 val.append("*")
             else:
+
+                #if cascate para escolher dados que serão printados
+
                 if entrada("printar CPf?(S/N)",['S','N']) == 'S':
                     val.append("CPF")
                 if entrada("printar Nome?(S/N)",['S','N']) == 'S':
@@ -100,19 +115,28 @@ def busca(cur):
                     val.append("nascimento")
                 if entrada("printar sexo?(S/N)",['S','N']) == 'S':
                     val.append("sexo")
+
             val = ",".join(val)
+
             sql = f"select {val} from pessoa"
+
+            #executa comando de busca
             cur.execute(sql)
 
+        #pegar resultados
         resultado = cur.fetchall()
+
         print()
+        #loop para printar resultados
         for res in resultado:
             print(res)
+
     except (Exception, psycopg2.DatabaseError) as error:
         print("")
         print(error)
 
 
+#função menu de inserção
 def insercao(conn, cur):
     print("(1) Inserir proposta de evento")
     escolha = entrada(':',['1'])
@@ -121,23 +145,33 @@ def insercao(conn, cur):
         inserir_proposta(conn, cur)
     else:
         return
-    
+
+#função de inserção de proposta
 def inserir_proposta(conn, cur):
     sql = """INSERT INTO PROPOSTA VALUES (%s, %s, %s);"""
+
     valores = []
 
     valores.append(int(input("id:")))
     valores.append(input("nome:"))
     valores.append(input("descrição:"))
+
     try:
+        #executar comando
         cur.execute(sql, (valores))
         
+        #commit caso nenhum erro aconteça
         conn.commit()
+
+    #except caso algum dados esteja errado
     except (Exception, psycopg2.DatabaseError) as error:
         print(error)    
 
+
 def main(conn, cur):
     print("\n\nAplicativo de acesso ao banco de dados\n")
+
+    #loop 
     while(True):
         legenda()
         escolha = entrada(":",['0','1','2'])
