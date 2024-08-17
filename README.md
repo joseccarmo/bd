@@ -9,4 +9,4 @@ a aparelhos para uso como a professores capacitados em não apenas ensinar a
 utilização do aparelho em si como também as diversas funcionalidades nele
 presentes.
 
-
+[Descrição Completa](https://github.com/joseccarmo/bd_conectec/blob/main/Conectec%20-%20descri%C3%A7%C3%A3o%20completa.pdf)
